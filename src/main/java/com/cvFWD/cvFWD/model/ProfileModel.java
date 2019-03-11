@@ -1,13 +1,8 @@
 package com.cvFWD.cvFWD.model;
 
+import lombok.Data;
+
+@Data
 public class ProfileModel {
     private String summery;
-
-    public String getSummery() {
-        return summery;
-    }
-
-    public void setSummery(String summery) {
-        this.summery = summery;
-    }
 }

@@ -18,7 +18,7 @@ public class InterestController {
         this.interestService = interestService;
     }
 
-    @RequestMapping(method = RequestMethod.POST)
+    @PostMapping
     public ResponseEntity<String> update(InterestModel interestModel, String email) {
         Interest result = this.interestService.update(interestModel, email);
         if (result == null) {
@@ -27,7 +27,7 @@ public class InterestController {
         return new ResponseEntity(result, HttpStatus.OK);
     }
 
-    @RequestMapping(method = RequestMethod.GET, value = "/{email}")
+    @GetMapping(value = "/{email}")
     public ResponseEntity<String> get(@PathVariable("email") String email) {
         Interest result = this.interestService.get(email);
         if (result == null) {

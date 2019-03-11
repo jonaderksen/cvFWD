@@ -5,6 +5,7 @@ import com.cvFWD.cvFWD.domain.Profile;
 import com.cvFWD.cvFWD.model.ProfileModel;
 import com.cvFWD.cvFWD.repository.AccountRepo;
 import com.cvFWD.cvFWD.repository.ProfileRepo;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -24,7 +25,7 @@ public class ProfileService {
     public Profile update(ProfileModel profileModel, String email) {
         if (profileModel == null)
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "No profile model provided");
-        if (profileModel.getSummery().equals(""))
+        if (StringUtils.isBlank(profileModel.getSummery()))
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "No profile summery provided");
         Account account = this.accountRepo.getByEmail(email);
         if (account == null)

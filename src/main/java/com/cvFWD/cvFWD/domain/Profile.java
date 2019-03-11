@@ -1,8 +1,11 @@
 package com.cvFWD.cvFWD.domain;
 
+import lombok.Data;
+
 import javax.persistence.*;
 
 @Entity
+@Data
 public class Profile {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -11,28 +14,4 @@ public class Profile {
 
     @OneToOne
     private Account account;
-
-    public long getId() {
-        return id;
-    }
-
-    public void setId(long id) {
-        this.id = id;
-    }
-
-    public String getSummery() {
-        return Summery;
-    }
-
-    public void setSummery(String summery) {
-        Summery = summery;
-    }
-
-    public Account getAccount() {
-        return account;
-    }
-
-    public void setAccount(Account account) {
-        this.account = account;
-    }
 }

@@ -4,6 +4,7 @@ import com.cvFWD.cvFWD.domain.*;
 import com.cvFWD.cvFWD.model.InitialCvModel;
 import com.cvFWD.cvFWD.model.UserInfoModel;
 import com.cvFWD.cvFWD.repository.*;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -66,6 +67,15 @@ public class AccountService {
     }
 
     public Account createInitalCv(InitialCvModel initialCvModel) {
+        if (initialCvModel == null){
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "No initial cv model provided");
+        }
+        if (StringUtils.isBlank(initialCvModel.getEmail())){
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "No email provided");
+        }
+        if (StringUtils.isBlank(initialCvModel.getName())) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "No name provided");
+        }
         Account account = this.accountRepo.getByEmail(initialCvModel.getEmail());
         if (account == null) {
             account = new Account();

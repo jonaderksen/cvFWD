@@ -5,6 +5,7 @@ import com.cvFWD.cvFWD.domain.Skill;
 import com.cvFWD.cvFWD.model.SkillModel;
 import com.cvFWD.cvFWD.repository.AccountRepo;
 import com.cvFWD.cvFWD.repository.SkillRepo;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -26,7 +27,7 @@ public class SkillService {
     public List<Skill> update(SkillModel skillModel, String email) {
         if (skillModel == null)
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "No skill model provided");
-        if (skillModel.getName() == "")
+        if (StringUtils.isBlank(skillModel.getName()))
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "No sills provided");
         if (skillModel.getLevel() < 0 || skillModel.getLevel() > 5)
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Incorrect skill level provided");

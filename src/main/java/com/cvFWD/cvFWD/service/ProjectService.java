@@ -6,6 +6,7 @@ import com.cvFWD.cvFWD.domain.Project;
 import com.cvFWD.cvFWD.model.ProjectModel;
 import com.cvFWD.cvFWD.repository.AccountRepo;
 import com.cvFWD.cvFWD.repository.ProjectRepo;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -29,21 +30,21 @@ public class ProjectService {
     public List<Project> update(ProjectModel projectModel, String email) {
         if (projectModel == null)
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "No project model provided");
-        if (projectModel.getStartDate().equals(""))
+        if (StringUtils.isBlank(projectModel.getStartDate()))
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "No project start date provided");
-        if (projectModel.getEndDate().equals(""))
+        if (StringUtils.isBlank(projectModel.getEndDate()))
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "No project end date provided");
-        if (projectModel.getCity().equals(""))
+        if (StringUtils.isBlank(projectModel.getCity()))
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "No project city provided");
-        if (projectModel.getCompany().equals(""))
+        if (StringUtils.isBlank(projectModel.getCompany()))
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "No project company provided");
-        if (projectModel.getJobTitle().equals(""))
+        if (StringUtils.isBlank(projectModel.getJobTitle()))
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "No project job title provided");
-        if (projectModel.getDescription().equals(""))
+        if (StringUtils.isBlank(projectModel.getDescription()))
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "No project description provided");
-        if (projectModel.getSkills().equals(""))
+        if (StringUtils.isBlank(projectModel.getSkills()))
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "No project skills provided");
-        if (projectModel.getImage().equals(""))
+        if (StringUtils.isBlank(projectModel.getImage()))
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "No project images provided");
 
         Account account = this.accountRepo.getByEmail(email);

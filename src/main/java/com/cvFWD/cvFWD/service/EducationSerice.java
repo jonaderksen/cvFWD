@@ -5,6 +5,7 @@ import com.cvFWD.cvFWD.domain.Education;
 import com.cvFWD.cvFWD.model.EducationModel;
 import com.cvFWD.cvFWD.repository.AccountRepo;
 import com.cvFWD.cvFWD.repository.EducationRepo;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -27,15 +28,15 @@ public class EducationSerice {
     public List<Education> update(EducationModel educationModel, String email) {
         if (educationModel == null)
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "No education model provided");
-        if (educationModel.getStartDate().equals(""))
+        if (StringUtils.isBlank(educationModel.getStartDate()))
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "No education start date provided");
-        if (educationModel.getEndDate().equals(""))
+        if (StringUtils.isBlank(educationModel.getEndDate()))
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "No education end date provided");
-        if ((educationModel.getCity().equals("")))
+        if (StringUtils.isBlank(educationModel.getCity()))
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "No education city provided");
-        if (educationModel.getTitle().equals(""))
+        if (StringUtils.isBlank(educationModel.getTitle()))
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "No eduction title provided");
-        if (educationModel.getInstituion().equals(""))
+        if (StringUtils.isBlank(educationModel.getInstituion()))
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "No education institution provided");
 
         Account account = this.accountRepo.getByEmail(email);

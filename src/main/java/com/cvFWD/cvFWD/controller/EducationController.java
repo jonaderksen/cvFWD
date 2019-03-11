@@ -20,7 +20,7 @@ public class EducationController {
         this.educationSerice = educationSerice;
     }
 
-    @RequestMapping(method = RequestMethod.POST)
+    @PostMapping
     public ResponseEntity update(EducationModel educationModel, String email) {
         List<Education> result = this.educationSerice.update(educationModel, email);
         if (result == null) {
@@ -29,7 +29,7 @@ public class EducationController {
         return new ResponseEntity(result, HttpStatus.OK);
     }
 
-    @RequestMapping(method = RequestMethod.GET, value = "/{email}")
+    @GetMapping(value = "/{email}")
     public ResponseEntity get(@PathVariable("email") String email) {
         List<Education> result = this.educationSerice.get(email);
         if (result == null) {

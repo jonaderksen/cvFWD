@@ -5,6 +5,7 @@ import com.cvFWD.cvFWD.domain.Language;
 import com.cvFWD.cvFWD.model.LanguageModel;
 import com.cvFWD.cvFWD.repository.AccountRepo;
 import com.cvFWD.cvFWD.repository.LanguageRepo;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -26,9 +27,9 @@ public class LanguageService {
     public List<Language> update(LanguageModel languageModel, String email) {
         if (languageModel == null)
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "No language model provided");
-        if (languageModel.getLanguage().equals(""))
+        if (StringUtils.isBlank(languageModel.getLanguage()))
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "No language provided");
-        if (languageModel.getLevel().equals(""))
+        if (StringUtils.isBlank(languageModel.getLevel()))
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "No language level provided");
 
         Account account = this.accountRepo.getByEmail(email);

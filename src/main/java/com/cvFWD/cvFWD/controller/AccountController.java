@@ -14,14 +14,15 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping(value = "/account")
 public class AccountController {
 
-    private final AccountService accountService;
+    private final
+    AccountService accountService;
 
     @Autowired
     public AccountController(AccountService accountService) {
         this.accountService = accountService;
     }
 
-    @RequestMapping(method = RequestMethod.GET, value = "/{email}")
+    @GetMapping(value = "/{email}")
     public ResponseEntity getUserinfo(@PathVariable("email") String email) {
         UserInfo result = this.accountService.getUserInfo(email);
         if (result == null) {
@@ -30,7 +31,7 @@ public class AccountController {
         return new ResponseEntity(result, HttpStatus.OK);
     }
 
-    @RequestMapping(method = RequestMethod.POST, value = "/initial")
+    @PostMapping( value = "/initial")
     public ResponseEntity innitialCv(InitialCvModel initialCvModel) {
         Account result = this.accountService.createInitalCv(initialCvModel);
         if (result == null) {
@@ -39,7 +40,7 @@ public class AccountController {
         return new ResponseEntity(result, HttpStatus.OK);
     }
 
-    @RequestMapping(method = RequestMethod.POST)
+    @PostMapping
     public ResponseEntity updateUserinfo(UserInfoModel userInfoModel) {
         UserInfo userInfo = this.accountService.updateUserinfo(userInfoModel);
         if (userInfo == null) {

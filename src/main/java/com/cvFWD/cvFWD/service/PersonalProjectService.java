@@ -5,6 +5,7 @@ import com.cvFWD.cvFWD.domain.PersonalProject;
 import com.cvFWD.cvFWD.model.PersonalProjectModel;
 import com.cvFWD.cvFWD.repository.AccountRepo;
 import com.cvFWD.cvFWD.repository.PersonalProjectRepo;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -26,15 +27,15 @@ public class PersonalProjectService {
     public List<PersonalProject> update(PersonalProjectModel personalProjectModel, String email) {
         if (personalProjectModel == null)
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "No personal project model provided");
-        if (personalProjectModel.getStartDate().equals(""))
+        if (StringUtils.isBlank(personalProjectModel.getStartDate()))
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "No personal project start date provided");
-        if (personalProjectModel.getEndDate().equals(""))
+        if (StringUtils.isBlank(personalProjectModel.getEndDate()))
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "No personal project end date provided");
-        if (personalProjectModel.getName().equals(""))
+        if (StringUtils.isBlank(personalProjectModel.getName()))
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "No personal project name provided");
-        if (personalProjectModel.getDescription().equals(""))
+        if (StringUtils.isBlank(personalProjectModel.getDescription()))
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "No personal project description provided");
-        if (personalProjectModel.getSkills().equals(""))
+        if (StringUtils.isBlank(personalProjectModel.getSkills()))
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "No personal project skills provided");
 
         Account account = this.accountRepo.getByEmail(email);

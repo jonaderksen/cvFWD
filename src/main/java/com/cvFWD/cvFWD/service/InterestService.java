@@ -5,6 +5,7 @@ import com.cvFWD.cvFWD.domain.Interest;
 import com.cvFWD.cvFWD.model.InterestModel;
 import com.cvFWD.cvFWD.repository.AccountRepo;
 import com.cvFWD.cvFWD.repository.InterestRepo;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -24,7 +25,7 @@ public class InterestService {
     public Interest update(InterestModel interestModel, String email) {
         if (interestModel == null)
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "No interest model provided");
-        if (interestModel.getInterest().equals(""))
+        if (StringUtils.isBlank(interestModel.getInterest()))
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "No interests provided");
 
         Account account = this.accountRepo.getByEmail(email);

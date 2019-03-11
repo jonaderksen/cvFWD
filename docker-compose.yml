@@ -1,21 +1,18 @@
-version: '2'
+version: '3'
 
 networks:
   cvfwdnetwork:
     driver: bridge
 
 services:
-  mongodb:
-    image: mongo:latest
-    container_name: mongodb
+  mysqldatabase:
+    image: mysql:latest
     environment:
-      - MONGO_DATA_DIR=/data/db
-      - MONGO_LOG_DIR=/dev/null
-    volumes:
-      - ./data/db:/data/db
-    ports:
-      - 27017:27017
-    command: mongod --smallfiles --logpath=/dev/null # --quiet
+      - MYSQL_ROOT_PASSWORD=root123
+      - MYSQL_USER=app_user
+      - MYSQL_PASSWORD=test123
+      - MYSQL_DATABASE=cvdb
+      - MYSQL_ONETIME_PASSWORD=true
     networks:
       - cvfwdnetwork
 
@@ -24,9 +21,10 @@ services:
     ports:
       - "8080:8080"
     environment:
-      - spring.data.mongodb.uri=mongodb://mongodb:27017/bookfwd
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysqldatabase/cvdb?useSSL=false&allowPublicKeyRetrieval=true
+      - SPRING_DATASOURCE_USERNAME=app_user
+      - SPRING_DATASOURCE_PASSWORD=test123
     depends_on:
-      - mongodb
+      - mysqldatabase
     networks:
       - cvfwdnetwork
-
