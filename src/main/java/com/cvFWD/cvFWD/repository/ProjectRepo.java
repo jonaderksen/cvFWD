@@ -8,4 +8,6 @@ import java.util.List;
 
 public interface ProjectRepo extends CrudRepository<Project, Long> {
     List<Project> getByAccount(Account account);
+
+    Project getById(long id);
 }

@@ -19,7 +19,7 @@ public class InterestController {
     }
 
     @PostMapping
-    public ResponseEntity<String> update(InterestModel interestModel, String email) {
+    public ResponseEntity<String> update(@RequestBody InterestModel interestModel, String email) {
         Interest result = this.interestService.update(interestModel, email);
         if (result == null) {
             return new ResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR);

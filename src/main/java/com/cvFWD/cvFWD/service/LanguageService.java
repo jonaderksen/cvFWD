@@ -1,7 +1,9 @@
 package com.cvFWD.cvFWD.service;
 
 import com.cvFWD.cvFWD.domain.Account;
+import com.cvFWD.cvFWD.domain.Education;
 import com.cvFWD.cvFWD.domain.Language;
+import com.cvFWD.cvFWD.model.DeleteModel;
 import com.cvFWD.cvFWD.model.LanguageModel;
 import com.cvFWD.cvFWD.repository.AccountRepo;
 import com.cvFWD.cvFWD.repository.LanguageRepo;
@@ -24,44 +26,18 @@ public class LanguageService {
         this.languageRepo = languageRepo;
     }
 
-    public List<Language> update(LanguageModel languageModel, String email) {
+    public List<Language> create(LanguageModel languageModel, String email) {
         if (languageModel == null)
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "No language model provided");
-        if (StringUtils.isBlank(languageModel.getLanguage()))
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "No language provided");
-        if (StringUtils.isBlank(languageModel.getLevel()))
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "No language level provided");
 
-        Account account = this.accountRepo.getByEmail(email);
-        if (account == null)
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Incorrect account provided");
-
+        Account account = checkLanguageInput(email, languageModel.getLanguage(), languageModel.getLevel());
         List<Language> languages = this.languageRepo.getByAccount(account);
         Language language = new Language();
-
-        if (languages.isEmpty() || languageModel.getId() == -1) {
-            language = createLanguage(language, account, languageModel);
-            languages.add(language);
-        } else {
-            int indexProject = 0;
-            boolean notFound = false;
-            for (Language languageFromList : languages
-            ) {
-                if (languageFromList.getId() == languageModel.getId()) {
-
-                    language = languageFromList;
-                    notFound = true;
-                    break;
-                }
-                indexProject++;
-
-            }
-            if (notFound) {
-                language = createLanguage(language, account, languageModel);
-                languages.set(indexProject, language);
-            }
-
-        }
+        language.setAccount(account);
+        language.setLanguage(languageModel.getLanguage());
+        language.setLevel(languageModel.getLevel());
+        this.languageRepo.save(language);
+        languages.add(language);
 
         return languages;
     }
@@ -83,5 +59,60 @@ public class LanguageService {
 
         return this.languageRepo.getByAccount(account);
 
+    }
+
+    public List<Language> update(Language language, String email) {
+        if (language.getId() < 0){
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invallided id provided");
+        }
+        Account account = checkLanguageInput(email, language.getLanguage(), language.getLevel());
+
+        List<Language> languages = this.languageRepo.getByAccount(account);
+        languages.stream().filter(currentLanguage -> currentLanguage.getId() == language.getId() &&
+                currentLanguage.getAccount().getEmail().equals(account.getEmail()))
+                .forEach(matchLanguage -> upddateMatchSkill(language));
+
+        return this.languageRepo.getByAccount(account);
+    }
+
+    private void upddateMatchSkill(Language language) {
+        Language currentLanguage = this.languageRepo.getById(language.getId());
+        currentLanguage.setLanguage(language.getLanguage());
+        currentLanguage.setLevel(language.getLevel());
+        this.languageRepo.save(currentLanguage);
+    }
+
+    public void delete(DeleteModel deleteModel) {
+        if (StringUtils.isBlank(deleteModel.getEmail())){
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "No email provided");
+        }
+        if (deleteModel.getId() < 0){
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invallided id provided");
+        }
+        Account account = this.accountRepo.getByEmail(deleteModel.getEmail());
+        if (account == null)
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Incorrect account provided");
+
+        Language language = this.languageRepo.getById(deleteModel.getId());
+        if (!account.getEmail().equals(language.getAccount().getEmail())){
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalled User with this skill");
+        }
+
+        this.languageRepo.delete(language);
+    }
+
+    private Account checkLanguageInput(String email, String language, String level){
+        if (StringUtils.isBlank(language))
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "No language provided");
+        if (StringUtils.isBlank(level))
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "No level provided");
+        if (StringUtils.isBlank(email))
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "No email provided");
+
+        Account account = this.accountRepo.getByEmail(email);
+        if (account == null)
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Incorrect account provided");
+
+        return account;
     }
 }

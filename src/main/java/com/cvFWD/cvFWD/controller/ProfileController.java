@@ -19,7 +19,7 @@ public class ProfileController {
     }
 
     @PostMapping
-    public ResponseEntity update(ProfileModel profileModel, String email) {
+    public ResponseEntity update(@RequestBody ProfileModel profileModel, String email) {
         Profile result = this.profileService.update(profileModel, email);
         if (result == null) {
             return new ResponseEntity(HttpStatus.FORBIDDEN);

@@ -1,6 +1,7 @@
 package com.cvFWD.cvFWD.controller;
 
 import com.cvFWD.cvFWD.domain.Language;
+import com.cvFWD.cvFWD.model.DeleteModel;
 import com.cvFWD.cvFWD.model.LanguageModel;
 import com.cvFWD.cvFWD.service.LanguageService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,8 +22,8 @@ public class LanguageController {
     }
 
     @PostMapping
-    public ResponseEntity upload(LanguageModel languageModel, String email) {
-        List<Language> result = this.languageService.update(languageModel, email);
+    public ResponseEntity create(@RequestBody LanguageModel languageModel, String email) {
+        List<Language> result = this.languageService.create(languageModel, email);
         if (result == null) {
             return new ResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR);
         }
@@ -36,6 +37,21 @@ public class LanguageController {
             return new ResponseEntity(HttpStatus.FORBIDDEN);
         }
         return new ResponseEntity(result, HttpStatus.OK);
+    }
+
+    @PutMapping
+    public ResponseEntity<List<Language>> update(@RequestBody Language language, String email){
+        List<Language> result = this.languageService.update(language, email);
+        if (result == null) {
+            return new ResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        return new ResponseEntity(result, HttpStatus.OK);
+    }
+
+    @DeleteMapping
+    public ResponseEntity delete(@RequestBody DeleteModel deleteModel) {
+        this.languageService.delete(deleteModel);
+        return new ResponseEntity(HttpStatus.OK);
     }
 
 }

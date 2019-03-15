@@ -1,6 +1,7 @@
 package com.cvFWD.cvFWD.controller;
 
 import com.cvFWD.cvFWD.domain.Skill;
+import com.cvFWD.cvFWD.model.DeleteModel;
 import com.cvFWD.cvFWD.model.SkillModel;
 import com.cvFWD.cvFWD.service.SkillService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,8 +22,8 @@ public class SkillController {
     }
 
     @PostMapping
-    public ResponseEntity upload(SkillModel skillModel, String email) {
-        List<Skill> result = this.skillService.update(skillModel, email);
+    public ResponseEntity<List<Skill>> create(@RequestBody SkillModel skillModel, String email) {
+        List<Skill> result = this.skillService.create(skillModel, email);
         if (result == null) {
             return new ResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR);
         }
@@ -36,5 +37,20 @@ public class SkillController {
             return new ResponseEntity(HttpStatus.FORBIDDEN);
         }
         return new ResponseEntity(result, HttpStatus.OK);
+    }
+
+    @PutMapping
+    public ResponseEntity<List<Skill>> update(@RequestBody Skill skill, String email){
+        List<Skill> result = this.skillService.update(skill, email);
+        if (result == null) {
+            return new ResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        return new ResponseEntity(result, HttpStatus.OK);
+    }
+
+    @DeleteMapping
+    public ResponseEntity delete(@RequestBody DeleteModel deleteModel) {
+        this.skillService.delete(deleteModel);
+        return new ResponseEntity(HttpStatus.OK);
     }
 }

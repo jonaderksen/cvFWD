@@ -8,4 +8,5 @@ import java.util.List;
 
 public interface EducationRepo extends CrudRepository<Education, Long> {
     List<Education> getByAccount(Account account);
+    Education getById(long id);
 }

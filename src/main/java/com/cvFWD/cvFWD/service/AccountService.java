@@ -4,11 +4,14 @@ import com.cvFWD.cvFWD.domain.*;
 import com.cvFWD.cvFWD.model.InitialCvModel;
 import com.cvFWD.cvFWD.model.UserInfoModel;
 import com.cvFWD.cvFWD.repository.*;
+import net.bytebuddy.implementation.bytecode.Throw;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
+
+import java.awt.*;
 
 @Service
 public class AccountService {
@@ -37,6 +40,25 @@ public class AccountService {
     }
 
     public UserInfo updateUserinfo(UserInfoModel userInfoModel) {
+        if (userInfoModel == null)
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "No user model provided");
+        if (StringUtils.isBlank(userInfoModel.getEmail()))
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "No email provided");
+        if (StringUtils.isBlank(userInfoModel.getName()))
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "No name provided");
+        if (StringUtils.isBlank(userInfoModel.getBirthday()))
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "No birthday provided");
+        if (StringUtils.isBlank(userInfoModel.getCity()))
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "No city provided");
+        if (StringUtils.isBlank(userInfoModel.getDrivingLicence()))
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "No driver licence provided");
+        if (StringUtils.isBlank(userInfoModel.getFunctionTitle()))
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "No function title provided");
+        if (StringUtils.isBlank(userInfoModel.getKeywords()))
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "No keywords provided");
+        if (StringUtils.isBlank(userInfoModel.getNationality()))
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "No nationality provided");
+
         Account account = this.accountRepo.getByEmail(userInfoModel.getEmail());
         if (account == null) {
             InitialCvModel initialCvModel = new InitialCvModel();
@@ -67,15 +89,7 @@ public class AccountService {
     }
 
     public Account createInitalCv(InitialCvModel initialCvModel) {
-        if (initialCvModel == null){
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "No initial cv model provided");
-        }
-        if (StringUtils.isBlank(initialCvModel.getEmail())){
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "No email provided");
-        }
-        if (StringUtils.isBlank(initialCvModel.getName())) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "No name provided");
-        }
+        checkInitialCvModel(initialCvModel);
         Account account = this.accountRepo.getByEmail(initialCvModel.getEmail());
         if (account == null) {
             account = new Account();
@@ -111,4 +125,26 @@ public class AccountService {
         this.profileRepo.save(profile);
     }
 
+    public Account updateAccount(InitialCvModel initialCvModel) {
+        checkInitialCvModel(initialCvModel);
+        Account account = this.accountRepo.getByEmail(initialCvModel.getEmail());
+        if (account == null){
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalled account email provied");
+        }
+        account.setEmail(initialCvModel.getEmail());
+        account.setName(initialCvModel.getName());
+        return this.accountRepo.save(account);
+    }
+
+    private void checkInitialCvModel(InitialCvModel initialCvModel){
+        if (initialCvModel == null){
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "No initial cv model provided");
+        }
+        if (StringUtils.isBlank(initialCvModel.getEmail())){
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "No email provided");
+        }
+        if (StringUtils.isBlank(initialCvModel.getName())) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "No name provided");
+        }
+    }
 }

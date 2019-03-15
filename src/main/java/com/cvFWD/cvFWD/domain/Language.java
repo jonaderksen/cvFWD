@@ -1,5 +1,6 @@
 package com.cvFWD.cvFWD.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 
 import javax.persistence.*;
@@ -13,6 +14,8 @@ public class Language {
     private String language;
     private String level;
 
-    @OneToOne
+    @JsonIgnore
+    @ManyToOne (fetch = FetchType.LAZY)
+    @JoinColumn(name = "account_id")
     private Account account;
 }

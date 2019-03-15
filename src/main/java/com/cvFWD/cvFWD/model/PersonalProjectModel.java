@@ -2,11 +2,12 @@ package com.cvFWD.cvFWD.model;
 
 import lombok.Data;
 
+import java.time.LocalDateTime;
+
 @Data
 public class PersonalProjectModel {
-    private long id;
-    private String startDate;
-    private String endDate;
+    private LocalDateTime startDate;
+    private LocalDateTime endDate;
     private String name;
     private String description;
     private String skills;

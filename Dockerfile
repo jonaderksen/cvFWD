@@ -11,8 +11,8 @@
 #CMD ["java", "-jar", "./target/slackbot-DEVELOP-SNAPSHOT.jar"]
 
 
-FROM java:8
-VOLUME /tmp
+FROM adoptopenjdk/openjdk11
+#VOLUME /tmp
 EXPOSE 8080
 ADD target/cvFWD-0.0.1-SNAPSHOT.jar cvFWD-0.0.1-SNAPSHOT.jar
 ENTRYPOINT ["java","-jar","cvFWD-0.0.1-SNAPSHOT.jar"]

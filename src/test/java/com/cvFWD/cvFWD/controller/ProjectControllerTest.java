@@ -37,7 +37,7 @@ public class ProjectControllerTest {
     public void setUp() {
         projectServiceMock = mock(ProjectService.class);
         this.projectController = new ProjectController(projectServiceMock);
-        when(projectServiceMock.get(anyString())).thenReturn(List.of(mock(Project.class), mock(Project.class)));
+        //when(projectServiceMock.get(anyString())).thenReturn(List.of(mock(Project.class), mock(Project.class)));
     }
 
     @Test

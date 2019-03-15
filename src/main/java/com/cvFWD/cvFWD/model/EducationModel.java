@@ -2,12 +2,13 @@ package com.cvFWD.cvFWD.model;
 
 import lombok.Data;
 
+import java.time.LocalDateTime;
+
 @Data
 public class EducationModel {
-    private long id;
-    private String startDate;
-    private String endDate;
-    private String instituion;
+    private LocalDateTime startDate;
+    private LocalDateTime endDate;
+    private String institution;
     private String city;
     private String title;
 }

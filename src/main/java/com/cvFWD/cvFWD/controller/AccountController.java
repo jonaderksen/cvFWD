@@ -32,7 +32,7 @@ public class AccountController {
     }
 
     @PostMapping( value = "/initial")
-    public ResponseEntity innitialCv(InitialCvModel initialCvModel) {
+    public ResponseEntity innitialCv(@RequestBody  InitialCvModel initialCvModel) {
         Account result = this.accountService.createInitalCv(initialCvModel);
         if (result == null) {
             return new ResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR);
@@ -40,12 +40,20 @@ public class AccountController {
         return new ResponseEntity(result, HttpStatus.OK);
     }
 
-    @PostMapping
-    public ResponseEntity updateUserinfo(UserInfoModel userInfoModel) {
+    @PostMapping (value = "/updateuserinfo")
+    public ResponseEntity updateUserinfo(@RequestBody  UserInfoModel userInfoModel) {
         UserInfo userInfo = this.accountService.updateUserinfo(userInfoModel);
         if (userInfo == null) {
             return new ResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR);
         }
         return new ResponseEntity(userInfo, HttpStatus.OK);
+    }
+    @PostMapping (value = "/updateaccount")
+    public ResponseEntity updateAccount(@RequestBody InitialCvModel initialCvModel){
+        Account account = this.accountService.updateAccount(initialCvModel);
+        if (account == null){
+            return new ResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        return new ResponseEntity(account, HttpStatus.OK);
     }
 }

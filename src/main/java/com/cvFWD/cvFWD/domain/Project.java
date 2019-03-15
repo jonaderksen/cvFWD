@@ -3,6 +3,7 @@ package com.cvFWD.cvFWD.domain;
 import lombok.Data;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 
 @Entity
 @Data
@@ -10,8 +11,8 @@ public class Project {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
-    private String startDate;
-    private String endDate;
+    private LocalDateTime startDate;
+    private LocalDateTime endDate;
     private String jobTitle;
     private String company;
     private String city;

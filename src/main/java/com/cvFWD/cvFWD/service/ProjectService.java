@@ -3,6 +3,7 @@ package com.cvFWD.cvFWD.service;
 import com.cvFWD.cvFWD.exceptions.AccountNotFoundException;
 import com.cvFWD.cvFWD.domain.Account;
 import com.cvFWD.cvFWD.domain.Project;
+import com.cvFWD.cvFWD.model.DeleteModel;
 import com.cvFWD.cvFWD.model.ProjectModel;
 import com.cvFWD.cvFWD.repository.AccountRepo;
 import com.cvFWD.cvFWD.repository.ProjectRepo;
@@ -12,6 +13,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -27,60 +29,15 @@ public class ProjectService {
     }
 
 
-    public List<Project> update(ProjectModel projectModel, String email) {
+    public List<Project> create(ProjectModel projectModel, String email) {
         if (projectModel == null)
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "No project model provided");
-        if (StringUtils.isBlank(projectModel.getStartDate()))
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "No project start date provided");
-        if (StringUtils.isBlank(projectModel.getEndDate()))
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "No project end date provided");
-        if (StringUtils.isBlank(projectModel.getCity()))
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "No project city provided");
-        if (StringUtils.isBlank(projectModel.getCompany()))
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "No project company provided");
-        if (StringUtils.isBlank(projectModel.getJobTitle()))
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "No project job title provided");
-        if (StringUtils.isBlank(projectModel.getDescription()))
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "No project description provided");
-        if (StringUtils.isBlank(projectModel.getSkills()))
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "No project skills provided");
-        if (StringUtils.isBlank(projectModel.getImage()))
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "No project images provided");
 
-        Account account = this.accountRepo.getByEmail(email);
-        if (account == null)
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Incorrect account provided");
 
+        Account account = checkProjectInput(email, projectModel.getStartDate(), projectModel.getEndDate(), projectModel.getCity(), projectModel.getCompany(), projectModel.getJobTitle(), projectModel.getDescription(), projectModel.getSkills(), projectModel.getImage());
         List<Project> projects = this.projectRepo.getByAccount(account);
         Project project = new Project();
-
-        if (projects.isEmpty() || projectModel.getId() == -1) {
-            project = createProejct(project, account, projectModel);
-            projects.add(project);
-        } else {
-            int indexProject = 0;
-            boolean notFound = false;
-            for (Project projectFromList : projects
-            ) {
-                if (projectFromList.getId() == projectModel.getId()) {
-
-                    project = projectFromList;
-                    notFound = true;
-                    break;
-                }
-                indexProject++;
-
-            }
-            if (notFound) {
-                project = createProejct(project, account, projectModel);
-                projects.set(indexProject, project);
-            }
-
-        }
-        return projects;
-    }
-
-    private Project createProejct(Project project, Account account, ProjectModel projectModel) {
+        project.setAccount(account);
         project.setStartDate(projectModel.getStartDate());
         project.setEndDate(projectModel.getEndDate());
         project.setCity(projectModel.getCity());
@@ -89,9 +46,9 @@ public class ProjectService {
         project.setDescription(projectModel.getDescription());
         project.setSkills(projectModel.getSkills());
         project.setImage(projectModel.getImage());
-        project.setAccount(account);
         this.projectRepo.save(project);
-        return project;
+        projects.add(project);
+        return projects;
     }
 
     public List<Project> get(String email) {
@@ -99,10 +56,82 @@ public class ProjectService {
         Optional<Account> optionalAccount = Optional.ofNullable(account);
         if (!optionalAccount.isPresent()) {
             throw new AccountNotFoundException("No account available");
-//            throw new HttpClientErrorException(HttpStatus.NOT_FOUND, "No account available");
-//            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No account available");
         }
 
         return this.projectRepo.getByAccount(account);
+    }
+
+    public List<Project> update(Project project, String email) {
+        if (project.getId() < 0){
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invallided id provided");
+        }
+        Account account = checkProjectInput(email, project.getStartDate(), project.getEndDate(), project.getCity(), project.getCompany(), project.getJobTitle(), project.getDescription(), project.getSkills(), project.getImage());
+
+
+        List<Project> skills = this.projectRepo.getByAccount(account);
+        skills.stream().filter(currentProject -> currentProject.getId() == project.getId() &&
+                currentProject.getAccount().getEmail().equals(account.getEmail()))
+                .forEach(matchProject -> upddateMatchSkill(project));
+
+        return this.projectRepo.getByAccount(account);
+    }
+
+    private void upddateMatchSkill(Project project) {
+        Project currentProject = this.projectRepo.getById(project.getId());
+        currentProject.setStartDate(project.getStartDate());
+        currentProject.setEndDate(project.getEndDate());
+        currentProject.setCity(project.getCity());
+        currentProject.setCity(project.getCompany());
+        currentProject.setJobTitle(project.getJobTitle());
+        currentProject.setDescription(project.getDescription());
+        currentProject.setSkills(project.getSkills());
+        currentProject.setImage(project.getImage());
+        this.projectRepo.save(currentProject);
+    }
+
+    public void delete(DeleteModel deleteModel) {
+        if (StringUtils.isBlank(deleteModel.getEmail())){
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "No email provided");
+        }
+        if (deleteModel.getId() < 0){
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invallided id provided");
+        }
+        Account account = this.accountRepo.getByEmail(deleteModel.getEmail());
+        if (account == null)
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Incorrect account provided");
+
+        Project Project = this.projectRepo.getById(deleteModel.getId());
+        if (!account.getEmail().equals(Project.getAccount().getEmail())){
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalled User with this skill");
+        }
+
+        this.projectRepo.delete(Project);
+    }
+
+    private Account checkProjectInput(String email, LocalDateTime startDate, LocalDateTime endDate, String city, String company, String jobtitle, String description, String skills, String image){
+        if (startDate == null)
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "No project start date provided");
+        if (endDate == null)
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "No project end date provided");
+        if (StringUtils.isBlank(city))
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "No project city provided");
+        if (StringUtils.isBlank(company))
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "No project company provided");
+        if (StringUtils.isBlank(jobtitle))
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "No project job title provided");
+        if (StringUtils.isBlank(description))
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "No project description provided");
+        if (StringUtils.isBlank(skills))
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "No project skills provided");
+        if (StringUtils.isBlank(image))
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "No project images provided");
+        if (StringUtils.isBlank(email))
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "No email provided");
+
+        Account account = this.accountRepo.getByEmail(email);
+        if (account == null)
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Incorrect account provided");
+
+        return account;
     }
 }

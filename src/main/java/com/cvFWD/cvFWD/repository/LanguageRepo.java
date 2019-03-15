@@ -8,4 +8,6 @@ import java.util.List;
 
 public interface LanguageRepo extends CrudRepository<Language, Long> {
     List<Language> getByAccount(Account account);
+
+    Language getById(Long id);
 }

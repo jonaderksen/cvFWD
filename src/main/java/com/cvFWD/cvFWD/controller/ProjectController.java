@@ -1,6 +1,7 @@
 package com.cvFWD.cvFWD.controller;
 
 import com.cvFWD.cvFWD.domain.Project;
+import com.cvFWD.cvFWD.model.DeleteModel;
 import com.cvFWD.cvFWD.model.ProjectModel;
 import com.cvFWD.cvFWD.service.ProjectService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,8 +23,8 @@ public class ProjectController {
     }
 
     @PostMapping
-    public ResponseEntity<List<Project>> update(ProjectModel projectModel, String email) {
-        List<Project> result = this.projectService.update(projectModel, email);
+    public ResponseEntity<List<Project>> create(@RequestBody ProjectModel projectModel, String email) {
+        List<Project> result = this.projectService.create(projectModel, email);
         if (result == null) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
@@ -37,5 +38,19 @@ public class ProjectController {
         }
         List<Project> result = this.projectService.get(email);
         return new ResponseEntity<>(result, HttpStatus.OK);
+    }
+    @PutMapping
+    public ResponseEntity<List<Project>> update(@RequestBody Project project, String email){
+        List<Project> result = this.projectService.update(project, email);
+        if (result == null) {
+            return new ResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        return new ResponseEntity(result, HttpStatus.OK);
+    }
+
+    @DeleteMapping
+    public ResponseEntity delete(@RequestBody DeleteModel deleteModel) {
+        this.projectService.delete(deleteModel);
+        return new ResponseEntity(HttpStatus.OK);
     }
 }
